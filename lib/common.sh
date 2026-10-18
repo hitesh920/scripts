@@ -47,7 +47,14 @@ verify_supported_ubuntu() {
 
 init_sudo() {
   require_command sudo
+
   if [[ ${DRY_RUN:-false} != true ]]; then
+    # Support servers configured for passwordless sudo.
+    if sudo -n true 2>/dev/null; then
+      return 0
+    fi
+
+    # Otherwise, request normal sudo authentication.
     sudo -v || die "sudo authentication failed"
   fi
 }
